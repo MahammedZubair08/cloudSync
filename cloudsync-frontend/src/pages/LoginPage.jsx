@@ -84,6 +84,17 @@ function LoginPage() {
           </button>
 
         </form>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
+          Don&apos;t have an account? 
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="text-blue-600 hover:text-blue-800 font-semibold"
+          >
+            Register here
+          </button>
+        </div>
       </div>
     </div>
   );

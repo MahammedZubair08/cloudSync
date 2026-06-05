@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import com.cloudsync.cloudsync.entity.User;
 
 @Entity
 @Table(name = "files")
@@ -29,9 +30,13 @@ public class FileEntity {
     private String contentType;
 
     private LocalDateTime uploadedAt;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @PrePersist
     protected void onCreate() {
         uploadedAt = LocalDateTime.now();
     }
+
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import api from "../api/axios";
 
 function DashboardPage() {
@@ -22,6 +23,39 @@ function DashboardPage() {
     localStorage.removeItem("token");
 
     navigate("/");
+  };
+  const downloadFile = async (id) => {
+
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        `http://localhost:8080/api/files/download/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      window.open(response.data, "_blank");
+
+    } catch (error) {
+
+      console.error(error);
+    }
+  };
+
+  const deleteFile = async (id) => {
+    try {
+      await api.delete(`/api/files/${id}`);
+      setMessage("File deleted successfully");
+      fetchFiles();
+    } catch (error) {
+      console.error(error);
+      setMessage("Delete failed");
+    }
   };
 
   const fetchFiles = async () => {
@@ -160,34 +194,40 @@ function DashboardPage() {
 
             <div className="space-y-3">
 
-              {
-                files.map((item) => (
+              {files?.map((file) => (
+
+                file && (
 
                   <div
-                    key={item.id}
-                    className="border p-4 rounded-lg bg-gray-50"
+                    key={file.id}
+                    className="bg-white p-4 rounded shadow"
                   >
 
-                    <p className="font-semibold">
-                      {item.fileName}
-                    </p>
+                    <h3 className="font-bold">
+                      {file.fileName}
+                    </h3>
 
-                    <p className="text-sm text-gray-500">
-                      {item.contentType}
-                    </p>
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => downloadFile(file.id)}
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                      >
+                        Open File
+                      </button>
 
-                    <a
-                      href={item.fileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-600"
-                    >
-                      Open File
-                    </a>
+                      <button
+                        onClick={() => deleteFile(file.id)}
+                        className="bg-red-500 text-white px-4 py-2 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
 
                   </div>
-                ))
-              }
+
+                )
+
+              ))}
 
             </div>
 
